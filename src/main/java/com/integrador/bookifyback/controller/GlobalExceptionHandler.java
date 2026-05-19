@@ -1,5 +1,8 @@
 package com.integrador.bookifyback.controller;
 
+import com.integrador.bookifyback.domain.autor.exception.AutorNoEncontradoException;
+import com.integrador.bookifyback.domain.categoria.exception.CategoriaNoEncontradaException;
+import com.integrador.bookifyback.domain.libro.dto.LibroResponse;
 import com.integrador.bookifyback.domain.rol.exception.RolNoEncontradoException;
 import com.integrador.bookifyback.domain.usuario.dto.RegisterResponse;
 import com.integrador.bookifyback.domain.usuario.exception.CorreoDuplicadoException;
@@ -48,5 +51,30 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+    @ExceptionHandler(AutorNoEncontradoException.class)
+    public ResponseEntity<LibroResponse> handleAutorNoEncontrado(
+            AutorNoEncontradoException exception
+    ) {
+
+        LibroResponse response = LibroResponse.builder()
+                .exito(false)
+                .mensaje(exception.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(CategoriaNoEncontradaException.class)
+    public ResponseEntity<LibroResponse> handleCategoriaNoEncontrada(
+            CategoriaNoEncontradaException exception
+    ) {
+
+        LibroResponse response = LibroResponse.builder()
+                .exito(false)
+                .mensaje(exception.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }
