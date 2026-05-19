@@ -4,7 +4,9 @@ import com.integrador.bookifyback.domain.autor.exception.AutorNoEncontradoExcept
 import com.integrador.bookifyback.domain.categoria.exception.CategoriaNoEncontradaException;
 import com.integrador.bookifyback.domain.libro.dto.LibroResponse;
 import com.integrador.bookifyback.domain.rol.exception.RolNoEncontradoException;
+import com.integrador.bookifyback.domain.usuario.dto.LoginResponse;
 import com.integrador.bookifyback.domain.usuario.dto.RegisterResponse;
+import com.integrador.bookifyback.domain.usuario.exception.CredencialesInvalidasException;
 import com.integrador.bookifyback.domain.usuario.exception.CorreoDuplicadoException;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -51,6 +53,16 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(CredencialesInvalidasException.class)
+    public ResponseEntity<LoginResponse> handleCredencialesInvalidas(CredencialesInvalidasException exception) {
+        LoginResponse response = LoginResponse.builder()
+                .exito(false)
+                .mensaje(exception.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
     @ExceptionHandler(AutorNoEncontradoException.class)
     public ResponseEntity<LibroResponse> handleAutorNoEncontrado(

@@ -2,8 +2,10 @@ package com.integrador.bookifyback.domain.libro;
 
 import com.integrador.bookifyback.domain.autor.Autor;
 import com.integrador.bookifyback.domain.autor.AutorRepository;
+import com.integrador.bookifyback.domain.autor.exception.AutorNoEncontradoException;
 import com.integrador.bookifyback.domain.categoria.Categoria;
 import com.integrador.bookifyback.domain.categoria.CategoriaRepository;
+import com.integrador.bookifyback.domain.categoria.exception.CategoriaNoEncontradaException;
 import com.integrador.bookifyback.domain.libro.dto.LibroRequest;
 import com.integrador.bookifyback.domain.libro.dto.LibroResponse;
 import jakarta.transaction.Transactional;

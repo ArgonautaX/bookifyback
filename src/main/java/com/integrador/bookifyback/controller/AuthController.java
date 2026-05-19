@@ -1,6 +1,8 @@
 package com.integrador.bookifyback.controller;
 
 import com.integrador.bookifyback.domain.usuario.UsuarioService;
+import com.integrador.bookifyback.domain.usuario.dto.LoginRequest;
+import com.integrador.bookifyback.domain.usuario.dto.LoginResponse;
 import com.integrador.bookifyback.domain.usuario.dto.RegisterRequest;
 import com.integrador.bookifyback.domain.usuario.dto.RegisterResponse;
 import jakarta.validation.Valid;
@@ -25,5 +27,11 @@ public class AuthController {
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
         RegisterResponse response = usuarioService.registrar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = usuarioService.login(request);
+        return ResponseEntity.ok(response);
     }
 }
