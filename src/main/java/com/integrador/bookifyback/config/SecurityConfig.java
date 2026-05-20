@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
+                        .requestMatchers("/libros", "/libros/**", "/autores", "/autores/**", "/categorias", "/categorias/**").permitAll()
                         .anyRequest().authenticated());
 
         return http.build();

@@ -1,5 +1,6 @@
 package com.integrador.bookifyback.controller;
 
+import com.integrador.bookifyback.domain.libro.Libro;
 import com.integrador.bookifyback.domain.libro.LibroService;
 import com.integrador.bookifyback.domain.libro.dto.LibroRequest;
 import com.integrador.bookifyback.domain.libro.dto.LibroResponse;
@@ -7,7 +8,10 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
+
+@CrossOrigin(origins = "http://localhost:4200") // <-- Agregamos esta línea
 @RestController
 @RequestMapping("/libros")
 public class LibroController {
@@ -28,5 +32,10 @@ public class LibroController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
+    }
+    @GetMapping
+    public ResponseEntity<List<Libro>> listar() {
+        List<Libro> libros = libroService.listarTodos();
+        return ResponseEntity.ok(libros);
     }
 }

@@ -10,6 +10,7 @@ import com.integrador.bookifyback.domain.libro.dto.LibroRequest;
 import com.integrador.bookifyback.domain.libro.dto.LibroResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class LibroService {
@@ -27,7 +28,9 @@ public class LibroService {
         this.autorRepository = autorRepository;
         this.categoriaRepository = categoriaRepository;
     }
-
+    public List<Libro> listarTodos() {
+        return libroRepository.findAll();
+    }
     @Transactional
     public LibroResponse registrar(LibroRequest request) {
 
