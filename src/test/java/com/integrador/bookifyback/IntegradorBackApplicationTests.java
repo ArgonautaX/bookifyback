@@ -1,4 +1,4 @@
-package com.bookify.integrador_back;
+package com.integrador.bookifyback;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

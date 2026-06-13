@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Getter
 @Builder
@@ -15,4 +16,5 @@ public class LoginResponse {
     private String mensaje;
     private Long usuarioId;
     private String correo;
+    private List<String> roles;
 }
