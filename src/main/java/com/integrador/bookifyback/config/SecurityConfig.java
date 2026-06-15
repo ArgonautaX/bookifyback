@@ -17,8 +17,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Value("${app.cors.allowed-origins:http://localhost:4200}")
@@ -43,7 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
-                        .requestMatchers("/libros", "/libros/**", "/autores", "/autores/**", "/categorias", "/categorias/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/libros", "/libros/**", "/autores", "/autores/**", "/categorias", "/categorias/**").permitAll()
                         .anyRequest().authenticated());
 
         return http.build();
