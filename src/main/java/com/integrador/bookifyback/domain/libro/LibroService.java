@@ -6,6 +6,7 @@ import com.integrador.bookifyback.domain.autor.exception.AutorNoEncontradoExcept
 import com.integrador.bookifyback.domain.categoria.Categoria;
 import com.integrador.bookifyback.domain.categoria.CategoriaRepository;
 import com.integrador.bookifyback.domain.categoria.exception.CategoriaNoEncontradaException;
+import com.integrador.bookifyback.domain.imagen.CloudinaryService;
 import com.integrador.bookifyback.domain.libro.dto.FiltroLibroDto;
 import com.integrador.bookifyback.domain.libro.dto.LibroBusquedaDto;
 import com.integrador.bookifyback.domain.libro.dto.LibroRequest;
@@ -23,15 +24,18 @@ public class LibroService {
     private final LibroRepository libroRepository;
     private final AutorRepository autorRepository;
     private final CategoriaRepository categoriaRepository;
+    private final CloudinaryService cloudinaryService;
 
     public LibroService(
             LibroRepository libroRepository,
             AutorRepository autorRepository,
-            CategoriaRepository categoriaRepository
+            CategoriaRepository categoriaRepository,
+            CloudinaryService cloudinaryService
     ) {
         this.libroRepository = libroRepository;
         this.autorRepository = autorRepository;
         this.categoriaRepository = categoriaRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public List<Libro> listarTodos() {
@@ -73,6 +77,27 @@ public class LibroService {
                 .exito(true)
                 .mensaje("Libro registrado correctamente")
                 .libroId(guardado.getId())
+                .build();
+    }
+
+    @Transactional
+    @org.springframework.cache.annotation.CacheEvict(value = "busquedaLibros", allEntries = true)
+    public LibroResponse actualizarPortada(Long libroId, String nuevaPortadaUrl) {
+        Libro libro = libroRepository.findById(libroId)
+                .orElseThrow(() -> new RuntimeException("Libro no encontrado con id: " + libroId));
+
+        String portadaAnterior = libro.getPortadaUrl();
+        if (portadaAnterior != null && !portadaAnterior.isBlank()) {
+            cloudinaryService.eliminarImagen(portadaAnterior);
+        }
+
+        libro.setPortadaUrl(nuevaPortadaUrl);
+        libroRepository.save(libro);
+
+        return LibroResponse.builder()
+                .exito(true)
+                .mensaje("Portada actualizada correctamente")
+                .libroId(libroId)
                 .build();
     }
 }

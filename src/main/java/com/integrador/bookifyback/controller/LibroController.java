@@ -61,4 +61,19 @@ public class LibroController {
         List<Libro> libros = libroService.listarTodos();
         return ResponseEntity.ok(libros);
     }
+
+    @PatchMapping("/{id}/portada")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<LibroResponse> actualizarPortada(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, String> body
+    ) {
+        String nuevaUrl = body.get("portadaUrl");
+        if (nuevaUrl == null || nuevaUrl.isBlank()) {
+            return ResponseEntity.badRequest().body(
+                    LibroResponse.builder().exito(false).mensaje("La URL de portada es obligatoria").build()
+            );
+        }
+        return ResponseEntity.ok(libroService.actualizarPortada(id, nuevaUrl));
+    }
 }
