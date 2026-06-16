@@ -47,23 +47,27 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getCorreo(), loginRequest.getContrasena())
         );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        HttpSession session = request.getSession(true);
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+        org.springframework.security.core.context.SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+        
+        org.springframework.security.web.context.SecurityContextRepository securityContextRepository = 
+                new org.springframework.security.web.context.HttpSessionSecurityContextRepository();
+        securityContextRepository.saveContext(context, request, response);
 
         Usuario usuario = usuarioRepository.findByCorreo(loginRequest.getCorreo()).orElseThrow();
         List<String> roles = authentication.getAuthorities().stream()
                 .map(grantedAuthority -> grantedAuthority.getAuthority())
                 .collect(Collectors.toList());
 
-        log.info("Usuario inició sesión exitosamente: {}", loginRequest.getCorreo());
+        log.info("Usuario inició sesión exitosamente: {} con roles: {}", loginRequest.getCorreo(), roles);
 
-        LoginResponse response = LoginResponse.builder()
+        LoginResponse loginResponse = LoginResponse.builder()
                 .exito(true)
                 .mensaje("Login exitoso")
                 .usuarioId(usuario.getId())
@@ -71,7 +75,7 @@ public class AuthController {
                 .roles(roles)
                 .build();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(loginResponse);
     }
 
     @PostMapping("/logout")

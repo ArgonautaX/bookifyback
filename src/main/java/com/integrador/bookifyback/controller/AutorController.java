@@ -21,4 +21,10 @@ public class AutorController {
     public ResponseEntity<List<Autor>> listar() {
         return ResponseEntity.ok(autorService.listarTodos());
     }
+
+    @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Autor> crear(@RequestBody Autor autor) {
+        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(autorService.crear(autor));
+    }
 }

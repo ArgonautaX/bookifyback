@@ -21,4 +21,10 @@ public class CategoriaController {
     public ResponseEntity<List<Categoria>> listar() {
         return ResponseEntity.ok(categoriaService.listarTodos());
     }
+
+    @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Categoria> crear(@RequestBody Categoria categoria) {
+        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(categoriaService.crear(categoria));
+    }
 }

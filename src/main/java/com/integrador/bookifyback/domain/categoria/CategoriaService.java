@@ -15,4 +15,8 @@ public class CategoriaService {
     public List<Categoria> listarTodos() {
         return categoriaRepository.findAll();
     }
+
+    public Categoria crear(Categoria categoria) {
+        return categoriaRepository.save(categoria);
+    }
 }
