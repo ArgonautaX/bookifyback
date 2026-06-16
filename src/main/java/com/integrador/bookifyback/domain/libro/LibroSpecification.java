@@ -16,8 +16,10 @@ public class LibroSpecification {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            root.fetch("autor", JoinType.LEFT);
-            root.fetch("categoria", JoinType.LEFT);
+            if (Long.class != query.getResultType() && long.class != query.getResultType()) {
+                root.fetch("autor", JoinType.LEFT);
+                root.fetch("categoria", JoinType.LEFT);
+            }
             query.distinct(true);
 
             predicates.add(cb.isTrue(root.get("estado")));
@@ -33,8 +35,22 @@ public class LibroSpecification {
                 predicates.add(cb.equal(root.get("autor").get("id"), filtro.autorId()));
             }
 
+            if (StringUtils.hasText(filtro.autorNombre())) {
+                predicates.add(cb.like(
+                        cb.lower(root.get("autor").get("nombre")),
+                        "%" + filtro.autorNombre().toLowerCase() + "%"
+                ));
+            }
+
             if (filtro.categoriaId() != null) {
                 predicates.add(cb.equal(root.get("categoria").get("id"), filtro.categoriaId()));
+            }
+
+            if (StringUtils.hasText(filtro.categoriaNombre())) {
+                predicates.add(cb.like(
+                        cb.lower(root.get("categoria").get("nombre")),
+                        "%" + filtro.categoriaNombre().toLowerCase() + "%"
+                ));
             }
 
             if (filtro.precioMin() != null) {

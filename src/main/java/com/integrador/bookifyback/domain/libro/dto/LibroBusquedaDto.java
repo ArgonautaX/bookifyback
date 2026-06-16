@@ -10,8 +10,8 @@ public record LibroBusquedaDto(
         BigDecimal precio,
         String formato,
         String portadaUrl,
-        String autor,
-        String categoria
+        String autorNombre,
+        String categoriaNombre
 ) {
     public static LibroBusquedaDto from(Libro libro) {
         return new LibroBusquedaDto(

@@ -1,5 +1,7 @@
 package com.integrador.bookifyback.domain.categoria;
 
+import com.integrador.bookifyback.domain.categoria.dto.CategoriaRequest;
+import com.integrador.bookifyback.domain.categoria.dto.CategoriaResponse;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -12,11 +14,17 @@ public class CategoriaService {
         this.categoriaRepository = categoriaRepository;
     }
 
-    public List<Categoria> listarTodos() {
-        return categoriaRepository.findAll();
+    @org.springframework.cache.annotation.Cacheable("categorias")
+    public List<CategoriaResponse> listarTodos() {
+        return categoriaRepository.findAll().stream()
+                .map(CategoriaResponse::from)
+                .toList();
     }
 
-    public Categoria crear(Categoria categoria) {
-        return categoriaRepository.save(categoria);
+    @org.springframework.cache.annotation.CacheEvict(value = "categorias", allEntries = true)
+    public CategoriaResponse crear(CategoriaRequest request) {
+        Categoria categoria = new Categoria();
+        categoria.setNombre(request.nombre().trim());
+        return CategoriaResponse.from(categoriaRepository.save(categoria));
     }
 }

@@ -46,6 +46,7 @@ public class LibroService {
     }
 
     @Transactional
+    @org.springframework.cache.annotation.CacheEvict(value = "busquedaLibros", allEntries = true)
     public LibroResponse registrar(LibroRequest request) {
 
         Autor autor = autorRepository.findById(request.getAutorId())

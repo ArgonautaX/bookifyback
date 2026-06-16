@@ -8,8 +8,8 @@ import com.integrador.bookifyback.domain.libro.dto.LibroRequest;
 import com.integrador.bookifyback.domain.libro.dto.LibroResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/libros")
 public class LibroController {
@@ -34,16 +33,15 @@ public class LibroController {
     public ResponseEntity<Page<LibroBusquedaDto>> buscar(
             @RequestParam(required = false) String titulo,
             @RequestParam(required = false) Long autorId,
+            @RequestParam(required = false) String autorNombre,
             @RequestParam(required = false) Long categoriaId,
+            @RequestParam(required = false) String categoriaNombre,
             @RequestParam(required = false) BigDecimal precioMin,
             @RequestParam(required = false) BigDecimal precioMax,
             @RequestParam(required = false) String formato,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "12") int size,
-            @RequestParam(defaultValue = "titulo") String sort
+            @org.springframework.data.web.PageableDefault(size = 12, sort = "titulo", direction = org.springframework.data.domain.Sort.Direction.ASC) Pageable pageable
     ) {
-        FiltroLibroDto filtro = new FiltroLibroDto(titulo, autorId, categoriaId, precioMin, precioMax, formato);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
+        FiltroLibroDto filtro = new FiltroLibroDto(titulo, autorId, autorNombre, categoriaId, categoriaNombre, precioMin, precioMax, formato);
         return ResponseEntity.ok(libroService.buscar(filtro, pageable));
     }
 

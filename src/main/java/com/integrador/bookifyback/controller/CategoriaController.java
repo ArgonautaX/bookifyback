@@ -1,30 +1,33 @@
 package com.integrador.bookifyback.controller;
 
-import java.util.List;
-import com.integrador.bookifyback.domain.categoria.Categoria;
-import com.integrador.bookifyback.domain.categoria.CategoriaService; // <-- Importamos el Service
+import com.integrador.bookifyback.domain.categoria.dto.CategoriaRequest;
+import com.integrador.bookifyback.domain.categoria.dto.CategoriaResponse;
+import com.integrador.bookifyback.domain.categoria.CategoriaService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaController {
 
-    private final CategoriaService categoriaService; // <-- Usamos el Service
+    private final CategoriaService categoriaService;
 
     public CategoriaController(CategoriaService categoriaService) {
         this.categoriaService = categoriaService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Categoria>> listar() {
+    public ResponseEntity<List<CategoriaResponse>> listar() {
         return ResponseEntity.ok(categoriaService.listarTodos());
     }
 
     @PostMapping
-    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Categoria> crear(@RequestBody Categoria categoria) {
-        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(categoriaService.crear(categoria));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CategoriaResponse> crear(@Valid @RequestBody CategoriaRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoriaService.crear(request));
     }
 }

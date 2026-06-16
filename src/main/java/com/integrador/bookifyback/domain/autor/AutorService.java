@@ -1,5 +1,7 @@
 package com.integrador.bookifyback.domain.autor;
 
+import com.integrador.bookifyback.domain.autor.dto.AutorRequest;
+import com.integrador.bookifyback.domain.autor.dto.AutorResponse;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -12,11 +14,17 @@ public class AutorService {
         this.autorRepository = autorRepository;
     }
 
-    public List<Autor> listarTodos() {
-        return autorRepository.findAll();
+    @org.springframework.cache.annotation.Cacheable("autores")
+    public List<AutorResponse> listarTodos() {
+        return autorRepository.findAll().stream()
+                .map(AutorResponse::from)
+                .toList();
     }
 
-    public Autor crear(Autor autor) {
-        return autorRepository.save(autor);
+    @org.springframework.cache.annotation.CacheEvict(value = "autores", allEntries = true)
+    public AutorResponse crear(AutorRequest request) {
+        Autor autor = new Autor();
+        autor.setNombre(request.nombre().trim());
+        return AutorResponse.from(autorRepository.save(autor));
     }
 }

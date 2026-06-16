@@ -8,6 +8,7 @@ import com.integrador.bookifyback.domain.usuario.dto.LoginResponse;
 import com.integrador.bookifyback.domain.usuario.dto.RegisterRequest;
 import com.integrador.bookifyback.domain.usuario.dto.RegisterResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Map;
@@ -33,11 +33,18 @@ public class AuthController {
     private final UsuarioService usuarioService;
     private final AuthenticationManager authenticationManager;
     private final UsuarioRepository usuarioRepository;
+    private final SecurityContextRepository securityContextRepository;
 
-    public AuthController(UsuarioService usuarioService, AuthenticationManager authenticationManager, UsuarioRepository usuarioRepository) {
+    public AuthController(
+            UsuarioService usuarioService,
+            AuthenticationManager authenticationManager,
+            UsuarioRepository usuarioRepository,
+            SecurityContextRepository securityContextRepository
+    ) {
         this.usuarioService = usuarioService;
         this.authenticationManager = authenticationManager;
         this.usuarioRepository = usuarioRepository;
+        this.securityContextRepository = securityContextRepository;
     }
 
     @PostMapping("/register")
@@ -47,17 +54,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getCorreo(), loginRequest.getContrasena())
         );
 
-        org.springframework.security.core.context.SecurityContext context = SecurityContextHolder.createEmptyContext();
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
-        
-        org.springframework.security.web.context.SecurityContextRepository securityContextRepository = 
-                new org.springframework.security.web.context.HttpSessionSecurityContextRepository();
         securityContextRepository.saveContext(context, request, response);
 
         Usuario usuario = usuarioRepository.findByCorreo(loginRequest.getCorreo()).orElseThrow();

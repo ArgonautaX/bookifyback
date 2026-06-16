@@ -1,30 +1,33 @@
 package com.integrador.bookifyback.controller;
 
-import java.util.List;
-import com.integrador.bookifyback.domain.autor.Autor;
-import com.integrador.bookifyback.domain.autor.AutorService; // <-- Importamos el Service
+import com.integrador.bookifyback.domain.autor.dto.AutorRequest;
+import com.integrador.bookifyback.domain.autor.dto.AutorResponse;
+import com.integrador.bookifyback.domain.autor.AutorService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/autores")
 public class AutorController {
 
-    private final AutorService autorService; // <-- Usamos el Service
+    private final AutorService autorService;
 
     public AutorController(AutorService autorService) {
         this.autorService = autorService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Autor>> listar() {
+    public ResponseEntity<List<AutorResponse>> listar() {
         return ResponseEntity.ok(autorService.listarTodos());
     }
 
     @PostMapping
-    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Autor> crear(@RequestBody Autor autor) {
-        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(autorService.crear(autor));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AutorResponse> crear(@Valid @RequestBody AutorRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(autorService.crear(request));
     }
 }
