@@ -42,6 +42,29 @@ public class LibroService {
         return libroRepository.findAll();
     }
 
+    public Libro obtenerPorId(Long id) {
+        return libroRepository.findById(id)
+                .orElseThrow(() -> new com.integrador.bookifyback.domain.libro.exception.LibroNoEncontradoException(id));
+    }
+
+    public List<LibroBusquedaDto> obtenerSimilares(Long id) {
+        Libro libroOriginal = obtenerPorId(id);
+        
+        // Paginacion para obtener solo los primeros 6 resultados
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 6);
+        
+        List<Libro> recomendados = libroRepository.findRecomendados(
+                libroOriginal.getCategoria().getId(),
+                libroOriginal.getAutor().getId(),
+                libroOriginal.getId(),
+                pageable
+        );
+        
+        return recomendados.stream()
+                .map(LibroBusquedaDto::from)
+                .toList();
+    }
+
     @Cacheable(value = "busquedaLibros", key = "#filtro.toString() + '_' + #pageable.toString()")
     public Page<LibroBusquedaDto> buscar(FiltroLibroDto filtro, Pageable pageable) {
         return libroRepository

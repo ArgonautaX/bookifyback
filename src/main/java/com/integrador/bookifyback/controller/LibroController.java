@@ -9,8 +9,6 @@ import com.integrador.bookifyback.domain.libro.dto.LibroResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,17 +37,16 @@ public class LibroController {
             @RequestParam(required = false) BigDecimal precioMin,
             @RequestParam(required = false) BigDecimal precioMax,
             @RequestParam(required = false) String formato,
-            @org.springframework.data.web.PageableDefault(size = 12, sort = "titulo", direction = org.springframework.data.domain.Sort.Direction.ASC) Pageable pageable
-    ) {
-        FiltroLibroDto filtro = new FiltroLibroDto(titulo, autorId, autorNombre, categoriaId, categoriaNombre, precioMin, precioMax, formato);
+            @org.springframework.data.web.PageableDefault(size = 12, sort = "titulo", direction = org.springframework.data.domain.Sort.Direction.ASC) Pageable pageable) {
+        FiltroLibroDto filtro = new FiltroLibroDto(titulo, autorId, autorNombre, categoriaId, categoriaNombre,
+                precioMin, precioMax, formato);
         return ResponseEntity.ok(libroService.buscar(filtro, pageable));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LibroResponse> registrar(
-            @Valid @RequestBody LibroRequest request
-    ) {
+            @Valid @RequestBody LibroRequest request) {
         LibroResponse response = libroService.registrar(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -62,17 +59,25 @@ public class LibroController {
         return ResponseEntity.ok(libros);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Libro> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(libroService.obtenerPorId(id));
+    }
+
+    @GetMapping("/{id}/similares")
+    public ResponseEntity<List<com.integrador.bookifyback.domain.libro.dto.LibroBusquedaDto>> obtenerSimilares(@PathVariable Long id) {
+        return ResponseEntity.ok(libroService.obtenerSimilares(id));
+    }
+
     @PatchMapping("/{id}/portada")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LibroResponse> actualizarPortada(
             @PathVariable Long id,
-            @RequestBody java.util.Map<String, String> body
-    ) {
+            @RequestBody java.util.Map<String, String> body) {
         String nuevaUrl = body.get("portadaUrl");
         if (nuevaUrl == null || nuevaUrl.isBlank()) {
             return ResponseEntity.badRequest().body(
-                    LibroResponse.builder().exito(false).mensaje("La URL de portada es obligatoria").build()
-            );
+                    LibroResponse.builder().exito(false).mensaje("La URL de portada es obligatoria").build());
         }
         return ResponseEntity.ok(libroService.actualizarPortada(id, nuevaUrl));
     }
