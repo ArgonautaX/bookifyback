@@ -4,10 +4,10 @@ import com.integrador.bookifyback.domain.libro.Libro;
 import com.integrador.bookifyback.domain.libro.LibroRepository;
 import com.integrador.bookifyback.domain.usuario.Usuario;
 import com.integrador.bookifyback.domain.usuario.UsuarioRepository;
-import com.mercadopago.client.preference.PreferenceClient;
-import com.mercadopago.client.preference.PreferenceItemRequest;
-import com.mercadopago.client.preference.PreferenceRequest;
-import com.mercadopago.resources.preference.Preference;
+// import com.mercadopago.client.preference.PreferenceClient;
+// import com.mercadopago.client.preference.PreferenceItemRequest;
+// import com.mercadopago.client.preference.PreferenceRequest;
+// import com.mercadopago.resources.preference.Preference;
 import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.resources.payment.Payment;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+// import java.math.BigDecimal;
+// import java.util.ArrayList;
+// import java.util.List;
 
 @Slf4j
 @Service
@@ -38,7 +38,8 @@ public class CompraService {
                         Usuario usuario = usuarioRepository.findByCorreo(correoUsuario)
                                         .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-                        // 2. Crear Item para Mercado Pago
+                        // 2. [CÓDIGO DE MERCADO PAGO COMENTADO PARA EVITAR DEPENDER DE CREDENCIALES/INTERNET]
+                        /*
                         PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
                                         .id(libro.getId().toString())
                                         .title(libro.getTitulo())
@@ -52,6 +53,7 @@ public class CompraService {
 
                         List<PreferenceItemRequest> items = new ArrayList<>();
                         items.add(itemRequest);
+                        */
 
                         // 3. Guardar en Base de Datos como PENDIENTE primero para tener el ID
                         Compra compra = Compra.builder()
@@ -62,6 +64,7 @@ public class CompraService {
                                         .build();
                         compra = compraRepository.save(compra);
 
+                        /*
                         // 4. Crear Preferencia de Mercado Pago con URLs de retorno
                         com.mercadopago.client.preference.PreferenceBackUrlsRequest backUrls = com.mercadopago.client.preference.PreferenceBackUrlsRequest
                                         .builder()
@@ -81,6 +84,10 @@ public class CompraService {
                         PreferenceClient client = new PreferenceClient();
                         Preference preference = client.create(preferenceRequest);
                         String preferenceId = preference.getId();
+                        */
+                        
+                        // SIMULACIÓN: En lugar de crear la preferencia en Mercado Pago, generamos un ID local
+                        String preferenceId = "SIMULADO-" + java.util.UUID.randomUUID().toString();
 
                         // Actualizar la compra con el preferenceId
                         compra.setMpPreferenceId(preferenceId);
@@ -89,10 +96,14 @@ public class CompraService {
                         log.info("Preferencia de MercadoPago creada con éxito. ID: {}", preferenceId);
                         return preferenceId;
 
+                /*
                 } catch (com.mercadopago.exceptions.MPApiException apiException) {
-                        log.error("Error devuelto por la API de Mercado Pago. Código de estado: {}", apiException.getApiResponse().getStatusCode());
+                        log.error("Error devuelto por la API de Mercado Pago. Código de estado: {}",
+                                        apiException.getApiResponse().getStatusCode());
                         log.error("Detalle del error de Mercado Pago: {}", apiException.getApiResponse().getContent());
-                        throw new RuntimeException("La API de Mercado Pago rechazó la petición. Revisa los logs del backend para más detalles.");
+                        throw new RuntimeException(
+                                        "La API de Mercado Pago rechazó la petición. Revisa los logs del backend para más detalles.");
+                */
                 } catch (Exception e) {
                         log.error("Error al iniciar la compra en Mercado Pago", e);
                         throw new RuntimeException("No se pudo iniciar la transacción con Mercado Pago");
@@ -104,7 +115,8 @@ public class CompraService {
                 try {
                         String type = (String) payload.get("type");
                         if ("payment".equals(type)) {
-                                java.util.Map<String, Object> data = (java.util.Map<String, Object>) payload.get("data");
+                                java.util.Map<String, Object> data = (java.util.Map<String, Object>) payload
+                                                .get("data");
                                 if (data != null && data.get("id") != null) {
                                         String paymentIdStr = data.get("id").toString();
                                         Long paymentId = Long.parseLong(paymentIdStr);
@@ -124,7 +136,8 @@ public class CompraService {
                                                                 compra.setEstado("FALLIDA");
                                                         }
                                                         compraRepository.save(compra);
-                                                        log.info("Webhook recibido. Compra actualizada: {} - Estado: {}", compra.getId(), compra.getEstado());
+                                                        log.info("Webhook recibido. Compra actualizada: {} - Estado: {}",
+                                                                        compra.getId(), compra.getEstado());
                                                 });
                                         }
                                 }
@@ -132,5 +145,14 @@ public class CompraService {
                 } catch (Exception e) {
                         log.error("Error procesando el webhook de Mercado Pago", e);
                 }
+        }
+
+        @Transactional
+        public void simularPagoDirecto(String preferenceId) {
+                compraRepository.findByMpPreferenceId(preferenceId).ifPresent(compra -> {
+                        compra.setEstado("COMPLETADA");
+                        compraRepository.save(compra);
+                        log.info("Pago procesado exitosamente: Compra {} marcada como COMPLETADA", compra.getId());
+                });
         }
 }

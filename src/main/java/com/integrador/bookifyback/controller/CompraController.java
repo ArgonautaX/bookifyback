@@ -3,6 +3,7 @@ package com.integrador.bookifyback.controller;
 import com.integrador.bookifyback.domain.compra.CompraRequest;
 import com.integrador.bookifyback.domain.compra.CompraResponse;
 import com.integrador.bookifyback.domain.compra.CompraService;
+import com.integrador.bookifyback.domain.compra.SimularPagoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,5 +32,11 @@ public class CompraController {
     public ResponseEntity<String> recibirWebhook(@RequestBody java.util.Map<String, Object> payload) {
         compraService.procesarWebhook(payload);
         return ResponseEntity.ok("OK");
+    }
+
+    @PostMapping("/simular-pago")
+    public ResponseEntity<String> simularPago(@RequestBody SimularPagoRequest request) {
+        compraService.simularPagoDirecto(request.preferenceId());
+        return ResponseEntity.ok("Pago procesado correctamente");
     }
 }
