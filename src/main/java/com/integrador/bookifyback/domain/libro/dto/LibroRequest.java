@@ -22,6 +22,7 @@ public class LibroRequest {
     private BigDecimal precio;
 
     @NotBlank(message = "El formato es obligatorio")
+    @Pattern(regexp = "^(?i)(PDF|EPUB|MOBI|AZW3)$", message = "El formato debe ser un tipo de archivo válido (PDF, EPUB, MOBI, AZW3)")
     private String formato;
 
     private String portadaUrl;
