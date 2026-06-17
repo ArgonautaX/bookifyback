@@ -21,4 +21,9 @@ public interface CompraRepository extends JpaRepository<Compra, Long> {
     List<Libro> findMasVendidosDesde(@Param("desde") LocalDateTime desde, Pageable pageable);
 
     java.util.Optional<Compra> findByMpPreferenceId(String mpPreferenceId);
+
+    @Query("SELECT DISTINCT l FROM Compra c JOIN c.libro l JOIN FETCH l.autor JOIN FETCH l.categoria WHERE c.usuario.correo = :correo AND c.estado = :estado")
+    List<Libro> findLibrosByUsuarioCorreoAndEstado(@Param("correo") String correo, @Param("estado") String estado);
+
+    boolean existsByUsuarioCorreoAndLibroIdAndEstado(String correo, Long libroId, String estado);
 }

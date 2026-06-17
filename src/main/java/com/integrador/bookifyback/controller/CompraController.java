@@ -39,4 +39,23 @@ public class CompraController {
         compraService.simularPagoDirecto(request.preferenceId());
         return ResponseEntity.ok("Pago procesado correctamente");
     }
+
+    @GetMapping("/mis-libros")
+    public ResponseEntity<java.util.List<com.integrador.bookifyback.domain.libro.Libro>> obtenerMisLibros(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok(compraService.obtenerMisLibros(userDetails.getUsername()));
+    }
+
+    @GetMapping("/verificar-acceso/{libroId}")
+    public ResponseEntity<?> verificarAcceso(@PathVariable Long libroId, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        boolean tieneAcceso = compraService.verificarAcceso(libroId, userDetails.getUsername());
+        
+        if (tieneAcceso) {
+            return ResponseEntity.ok(java.util.Map.of("acceso", true));
+        } else {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                    .body(java.util.Map.of("acceso", false, "mensaje", "No tienes acceso a este libro"));
+        }
+    }
 }

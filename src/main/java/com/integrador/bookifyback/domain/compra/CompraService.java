@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 // import java.math.BigDecimal;
 // import java.util.ArrayList;
-// import java.util.List;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -154,5 +154,15 @@ public class CompraService {
                         compraRepository.save(compra);
                         log.info("Pago procesado exitosamente: Compra {} marcada como COMPLETADA", compra.getId());
                 });
+        }
+
+        @Transactional(readOnly = true)
+        public List<Libro> obtenerMisLibros(String correoUsuario) {
+                return compraRepository.findLibrosByUsuarioCorreoAndEstado(correoUsuario, "COMPLETADA");
+        }
+
+        @Transactional(readOnly = true)
+        public boolean verificarAcceso(Long libroId, String correoUsuario) {
+                return compraRepository.existsByUsuarioCorreoAndLibroIdAndEstado(correoUsuario, libroId, "COMPLETADA");
         }
 }
