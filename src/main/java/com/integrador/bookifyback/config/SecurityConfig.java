@@ -44,7 +44,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityContextRepository securityContextRepository) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+            SecurityContextRepository securityContextRepository) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -52,7 +53,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/libros", "/libros/**", "/autores", "/autores/**", "/categorias", "/categorias/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/libros", "/libros/**", "/autores", "/autores/**",
+                                "/categorias", "/categorias/**")
+                        .permitAll()
                         .anyRequest().authenticated());
 
         return http.build();
