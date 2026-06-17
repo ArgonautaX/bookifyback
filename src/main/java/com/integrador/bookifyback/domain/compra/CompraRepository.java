@@ -25,5 +25,15 @@ public interface CompraRepository extends JpaRepository<Compra, Long> {
     @Query("SELECT DISTINCT l FROM Compra c JOIN c.libro l JOIN FETCH l.autor JOIN FETCH l.categoria WHERE c.usuario.correo = :correo AND c.estado = :estado")
     List<Libro> findLibrosByUsuarioCorreoAndEstado(@Param("correo") String correo, @Param("estado") String estado);
 
+    @Query("SELECT c FROM Compra c JOIN FETCH c.libro l JOIN FETCH l.autor WHERE c.usuario.correo = :correo " +
+           "AND (cast(:fechaInicio as timestamp) IS NULL OR c.fechaCompra >= :fechaInicio) " +
+           "AND (cast(:fechaFin as timestamp) IS NULL OR c.fechaCompra <= :fechaFin) " +
+           "ORDER BY c.fechaCompra DESC")
+    List<Compra> findHistorialByUsuarioCorreoAndFechas(
+            @Param("correo") String correo,
+            @Param("fechaInicio") LocalDateTime fechaInicio,
+            @Param("fechaFin") LocalDateTime fechaFin
+    );
+
     boolean existsByUsuarioCorreoAndLibroIdAndEstado(String correo, Long libroId, String estado);
 }

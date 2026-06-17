@@ -170,4 +170,12 @@ public class CompraService {
         public boolean verificarAcceso(Long libroId, String correoUsuario) {
                 return compraRepository.existsByUsuarioCorreoAndLibroIdAndEstado(correoUsuario, libroId, "COMPLETADA");
         }
+
+        @Transactional(readOnly = true)
+        public List<HistorialCompraDto> obtenerHistorialUsuario(String correoUsuario, java.time.LocalDateTime fechaInicio, java.time.LocalDateTime fechaFin) {
+                return compraRepository.findHistorialByUsuarioCorreoAndFechas(correoUsuario, fechaInicio, fechaFin)
+                                .stream()
+                                .map(HistorialCompraDto::from)
+                                .toList();
+        }
 }

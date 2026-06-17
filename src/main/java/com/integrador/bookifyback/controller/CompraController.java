@@ -58,4 +58,14 @@ public class CompraController {
                     .body(java.util.Map.of("acceso", false, "mensaje", "No tienes acceso a este libro"));
         }
     }
+
+    @GetMapping("/historial")
+    public ResponseEntity<java.util.List<com.integrador.bookifyback.domain.compra.HistorialCompraDto>> obtenerHistorial(
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime fechaInicio,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime fechaFin,
+            Authentication authentication) {
+        
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok(compraService.obtenerHistorialUsuario(userDetails.getUsername(), fechaInicio, fechaFin));
+    }
 }
