@@ -25,17 +25,20 @@ public class LibroService {
     private final AutorRepository autorRepository;
     private final CategoriaRepository categoriaRepository;
     private final CloudinaryService cloudinaryService;
+    private final com.integrador.bookifyback.domain.compra.CompraRepository compraRepository;
 
     public LibroService(
             LibroRepository libroRepository,
             AutorRepository autorRepository,
             CategoriaRepository categoriaRepository,
-            CloudinaryService cloudinaryService
+            CloudinaryService cloudinaryService,
+            com.integrador.bookifyback.domain.compra.CompraRepository compraRepository
     ) {
         this.libroRepository = libroRepository;
         this.autorRepository = autorRepository;
         this.categoriaRepository = categoriaRepository;
         this.cloudinaryService = cloudinaryService;
+        this.compraRepository = compraRepository;
     }
 
     public List<Libro> listarTodos() {
@@ -63,6 +66,23 @@ public class LibroService {
         return recomendados.stream()
                 .map(LibroBusquedaDto::from)
                 .toList();
+    }
+
+    public List<LibroBusquedaDto> obtenerMasVendidos(String periodo) {
+        org.springframework.data.domain.Pageable limit = org.springframework.data.domain.PageRequest.of(0, 8);
+        java.time.LocalDateTime desde;
+        
+        switch (periodo.toLowerCase()) {
+            case "hoy":
+                desde = java.time.LocalDate.now().atStartOfDay();
+                return compraRepository.findMasVendidosDesde(desde, limit).stream().map(LibroBusquedaDto::from).toList();
+            case "semana":
+                desde = java.time.LocalDate.now().minusDays(7).atStartOfDay();
+                return compraRepository.findMasVendidosDesde(desde, limit).stream().map(LibroBusquedaDto::from).toList();
+            case "siempre":
+            default:
+                return compraRepository.findMasPopulares(limit).stream().map(LibroBusquedaDto::from).toList();
+        }
     }
 
     @Cacheable(value = "busquedaLibros", key = "#filtro.toString() + '_' + #pageable.toString()")

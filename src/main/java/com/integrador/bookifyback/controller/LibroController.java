@@ -59,6 +59,12 @@ public class LibroController {
         return ResponseEntity.ok(libros);
     }
 
+    @GetMapping("/top")
+    public ResponseEntity<List<com.integrador.bookifyback.domain.libro.dto.LibroBusquedaDto>> obtenerMasVendidos(
+            @RequestParam(defaultValue = "siempre") String periodo) {
+        return ResponseEntity.ok(libroService.obtenerMasVendidos(periodo));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Libro> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(libroService.obtenerPorId(id));
