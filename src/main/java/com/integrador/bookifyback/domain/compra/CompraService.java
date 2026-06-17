@@ -38,6 +38,11 @@ public class CompraService {
                         Usuario usuario = usuarioRepository.findByCorreo(correoUsuario)
                                         .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+                        // 1.5. Validar que el usuario no tenga ya el libro comprado
+                        if (compraRepository.existsByUsuarioCorreoAndLibroIdAndEstado(correoUsuario, libroId, "COMPLETADA")) {
+                                throw new IllegalStateException("El usuario ya ha comprado este libro.");
+                        }
+
                         // 2. [CÓDIGO DE MERCADO PAGO COMENTADO PARA EVITAR DEPENDER DE CREDENCIALES/INTERNET]
                         /*
                         PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
