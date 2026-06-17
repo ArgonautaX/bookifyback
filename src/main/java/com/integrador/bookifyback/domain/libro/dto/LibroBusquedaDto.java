@@ -11,7 +11,8 @@ public record LibroBusquedaDto(
         String formato,
         String portadaUrl,
         String autorNombre,
-        String categoriaNombre
+        String categoriaNombre,
+        Boolean estado
 ) {
     public static LibroBusquedaDto from(Libro libro) {
         return new LibroBusquedaDto(
@@ -22,7 +23,8 @@ public record LibroBusquedaDto(
                 libro.getFormato(),
                 libro.getPortadaUrl(),
                 libro.getAutor().getNombre(),
-                libro.getCategoria().getNombre()
+                libro.getCategoria().getNombre(),
+                libro.getEstado()
         );
     }
 }
