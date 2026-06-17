@@ -143,4 +143,48 @@ public class LibroService {
                 .libroId(libroId)
                 .build();
     }
+        @Transactional
+        @org.springframework.cache.annotation.CacheEvict(value = "busquedaLibros", allEntries = true)
+        public LibroResponse actualizar(Long id, LibroRequest request) {
+            Libro libro = obtenerPorId(id);
+
+            Autor autor = autorRepository.findById(request.getAutorId())
+                    .orElseThrow(() -> new AutorNoEncontradoException(request.getAutorId()));
+
+            Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
+                    .orElseThrow(() -> new CategoriaNoEncontradaException(request.getCategoriaId()));
+
+            libro.setTitulo(request.getTitulo().trim());
+            libro.setDescripcion(request.getDescripcion().trim());
+            libro.setPrecio(request.getPrecio());
+            libro.setFormato(request.getFormato().trim());
+            libro.setAutor(autor);
+            libro.setCategoria(categoria);
+            
+            // La portada se maneja en su propio endpoint (actualizarPortada)
+            
+            libroRepository.save(libro);
+
+            return LibroResponse.builder()
+                    .exito(true)
+                    .mensaje("Libro actualizado correctamente")
+                    .libroId(libro.getId())
+                    .build();
+        }
+
+        @Transactional
+        @org.springframework.cache.annotation.CacheEvict(value = "busquedaLibros", allEntries = true)
+        public LibroResponse cambiarEstado(Long id, boolean activo) {
+            Libro libro = obtenerPorId(id);
+            libro.setEstado(activo);
+            libroRepository.save(libro);
+
+            String mensaje = activo ? "Libro restaurado correctamente" : "Libro dado de baja correctamente";
+            
+            return LibroResponse.builder()
+                    .exito(true)
+                    .mensaje(mensaje)
+                    .libroId(libro.getId())
+                    .build();
+        }
 }

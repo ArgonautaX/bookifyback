@@ -37,9 +37,10 @@ public class LibroController {
             @RequestParam(required = false) BigDecimal precioMin,
             @RequestParam(required = false) BigDecimal precioMax,
             @RequestParam(required = false) String formato,
+            @RequestParam(required = false) Boolean estado,
             @org.springframework.data.web.PageableDefault(size = 12, sort = "titulo", direction = org.springframework.data.domain.Sort.Direction.ASC) Pageable pageable) {
         FiltroLibroDto filtro = new FiltroLibroDto(titulo, autorId, autorNombre, categoriaId, categoriaNombre,
-                precioMin, precioMax, formato);
+                precioMin, precioMax, formato, estado);
         return ResponseEntity.ok(libroService.buscar(filtro, pageable));
     }
 
@@ -86,5 +87,26 @@ public class LibroController {
                     LibroResponse.builder().exito(false).mensaje("La URL de portada es obligatoria").build());
         }
         return ResponseEntity.ok(libroService.actualizarPortada(id, nuevaUrl));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<LibroResponse> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody LibroRequest request) {
+        return ResponseEntity.ok(libroService.actualizar(id, request));
+    }
+
+    @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<LibroResponse> cambiarEstado(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, Boolean> body) {
+        Boolean activo = body.get("activo");
+        if (activo == null) {
+            return ResponseEntity.badRequest().body(
+                    LibroResponse.builder().exito(false).mensaje("El campo 'activo' es obligatorio").build());
+        }
+        return ResponseEntity.ok(libroService.cambiarEstado(id, activo));
     }
 }

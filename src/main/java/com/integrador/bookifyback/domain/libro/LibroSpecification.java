@@ -22,7 +22,16 @@ public class LibroSpecification {
             }
             query.distinct(true);
 
-            predicates.add(cb.isTrue(root.get("estado")));
+            if (filtro.estado() != null) {
+                if (filtro.estado()) {
+                    predicates.add(cb.isTrue(root.get("estado")));
+                } else {
+                    predicates.add(cb.isFalse(root.get("estado")));
+                }
+            } else {
+                // Por defecto, si no se envía parámetro, solo mostramos los activos
+                predicates.add(cb.isTrue(root.get("estado")));
+            }
 
             if (StringUtils.hasText(filtro.titulo())) {
                 predicates.add(cb.like(

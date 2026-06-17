@@ -10,5 +10,6 @@ public record FiltroLibroDto(
                 String categoriaNombre,
                 BigDecimal precioMin,
                 BigDecimal precioMax,
-                String formato) {
+                String formato,
+                Boolean estado) {
 }
