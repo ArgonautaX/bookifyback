@@ -20,4 +20,5 @@ public interface CompraRepository extends JpaRepository<Compra, Long> {
     @Query("SELECT c.libro FROM Compra c WHERE c.estado = 'COMPLETADA' AND c.fechaCompra >= :desde GROUP BY c.libro ORDER BY COUNT(c.id) DESC")
     List<Libro> findMasVendidosDesde(@Param("desde") LocalDateTime desde, Pageable pageable);
 
+    java.util.Optional<Compra> findByMpPreferenceId(String mpPreferenceId);
 }

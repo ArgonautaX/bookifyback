@@ -26,4 +26,10 @@ public class CompraController {
 
         return ResponseEntity.ok(new CompraResponse(preferenceId));
     }
+
+    @PostMapping("/webhook")
+    public ResponseEntity<String> recibirWebhook(@RequestBody java.util.Map<String, Object> payload) {
+        compraService.procesarWebhook(payload);
+        return ResponseEntity.ok("OK");
+    }
 }
