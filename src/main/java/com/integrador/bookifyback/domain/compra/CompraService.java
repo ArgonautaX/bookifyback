@@ -27,6 +27,7 @@ public class CompraService {
         private final CompraRepository compraRepository;
         private final LibroRepository libroRepository;
         private final UsuarioRepository usuarioRepository;
+        private final com.integrador.bookifyback.domain.email.EmailService emailService;
 
         @Transactional
         public String iniciarCompra(Long libroId, String correoUsuario) {
@@ -143,6 +144,17 @@ public class CompraService {
                                                         compraRepository.save(compra);
                                                         log.info("Webhook recibido. Compra actualizada: {} - Estado: {}",
                                                                         compra.getId(), compra.getEstado());
+                                                                        
+                                                        // Enviar correo de confirmación o fallo
+                                                        emailService.enviarReciboCompra(
+                                                            compra.getId(), 
+                                                            compra.getEstado(), 
+                                                            compra.getUsuario().getCorreo(), 
+                                                            compra.getUsuario().getNombre(), 
+                                                            compra.getLibro().getTitulo(), 
+                                                            compra.getLibro().getAutor().getNombre(), 
+                                                            compra.getMonto()
+                                                        );
                                                 });
                                         }
                                 }
@@ -158,6 +170,17 @@ public class CompraService {
                         compra.setEstado("COMPLETADA");
                         compraRepository.save(compra);
                         log.info("Pago procesado exitosamente: Compra {} marcada como COMPLETADA", compra.getId());
+                        
+                        // Disparar correo de confirmación de forma asíncrona
+                        emailService.enviarReciboCompra(
+                            compra.getId(), 
+                            compra.getEstado(), 
+                            compra.getUsuario().getCorreo(), 
+                            compra.getUsuario().getNombre(), 
+                            compra.getLibro().getTitulo(), 
+                            compra.getLibro().getAutor().getNombre(), 
+                            compra.getMonto()
+                        );
                 });
         }
 
