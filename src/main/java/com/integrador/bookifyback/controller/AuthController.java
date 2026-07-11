@@ -92,4 +92,21 @@ public class AuthController {
         log.info("Usuario cerró sesión");
         return ResponseEntity.ok(Map.of("mensaje", "Logout exitoso"));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, Object>> me(Authentication authentication, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        boolean authenticated = authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(authentication.getPrincipal());
+        Map<String, Object> result = new java.util.LinkedHashMap<>();
+        result.put("authenticated", authenticated);
+        result.put("sessionId", session != null ? session.getId() : null);
+        result.put("sessionValid", session != null);
+        if (authenticated) {
+            result.put("name", authentication.getName());
+            result.put("roles", authentication.getAuthorities().stream()
+                    .map(g -> g.getAuthority()).toList());
+        }
+        return ResponseEntity.ok(result);
+    }
 }

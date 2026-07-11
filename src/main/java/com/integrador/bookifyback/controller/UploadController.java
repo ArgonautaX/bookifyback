@@ -2,12 +2,16 @@ package com.integrador.bookifyback.controller;
 
 import com.integrador.bookifyback.domain.imagen.CloudinaryService;
 import com.integrador.bookifyback.domain.libro.LibroService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+
+@Slf4j
 
 @RestController
 @RequestMapping("/upload")
@@ -39,7 +43,13 @@ public class UploadController {
 
     @PostMapping("/libro/{libroId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> subirArchivoLibro(@PathVariable Long libroId, @RequestParam("archivo") MultipartFile archivo) {
+    public ResponseEntity<?> subirArchivoLibro(@PathVariable Long libroId, @RequestParam("archivo") MultipartFile archivo, Authentication authentication) {
+        log.info("=== UPLOAD DEBUG ===");
+        log.info("Authentication: {}", authentication);
+        log.info("Authenticated: {}", authentication != null && authentication.isAuthenticated());
+        log.info("Principal: {}", authentication != null ? authentication.getName() : null);
+        log.info("Authorities: {}", authentication != null ? authentication.getAuthorities() : null);
+
         if (archivo.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "El archivo está vacío"));
         }
