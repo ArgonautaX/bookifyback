@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+                                  http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="ReporteVentas" pageWidth="842" pageHeight="595"
+              orientation="Landscape" columnWidth="802"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <parameter name="fechaInicio" class="java.lang.String"/>
+    <parameter name="fechaFin" class="java.lang.String"/>
+    <parameter name="totalVentas" class="java.lang.Long"/>
+    <parameter name="ingresosTotales" class="java.math.BigDecimal"/>
+    <parameter name="cantidadTransacciones" class="java.lang.Long"/>
+
+    <field name="titulo" class="java.lang.String"/>
+    <field name="autorNombre" class="java.lang.String"/>
+    <field name="categoriaNombre" class="java.lang.String"/>
+    <field name="cantidadVendida" class="java.lang.Long"/>
+    <field name="ingresos" class="java.math.BigDecimal"/>
+
+    <title>
+        <band height="60">
+            <staticText>
+                <reportElement x="0" y="0" width="802" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="20" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Reporte de Ventas - Bookify]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="30" width="802" height="20"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Del " + $P{fechaInicio} + " al " + $P{fechaFin}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <pageHeader>
+        <band height="70">
+            <rectangle>
+                <reportElement x="0" y="0" width="802" height="60" mode="Opaque">
+                    <backcolor color="#F0F0F0"/>
+                </rectangle>
+            </rectangle>
+            <textField>
+                <reportElement x="20" y="5" width="250" height="20"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Total de Ventas: " + $P{totalVentas}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="280" y="5" width="250" height="20"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Ingresos Totales: S/ " + $P{ingresosTotales}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="540" y="5" width="250" height="20"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Transacciones: " + $P{cantidadTransacciones}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageHeader>
+
+    <columnHeader>
+        <band height="25">
+            <rectangle>
+                <reportElement x="0" y="0" width="802" height="25" mode="Opaque">
+                    <backcolor color="#2C3E50"/>
+                </reportElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="5" y="0" width="30" height="25"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true" color="#FFFFFF"/>
+                </textElement>
+                <text><![CDATA[#]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="35" y="0" width="200" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true" color="#FFFFFF"/>
+                </textElement>
+                <text><![CDATA[Título]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="235" y="0" width="170" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true" color="#FFFFFF"/>
+                </textElement>
+                <text><![CDATA[Autor]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="405" y="0" width="140" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true" color="#FFFFFF"/>
+                </textElement>
+                <text><![CDATA[Categoría]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="545" y="0" width="120" height="25"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="10" isBold="true" color="#FFFFFF"/>
+                </textElement>
+                <text><![CDATA[Cantidad]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="665" y="0" width="130" height="25"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="10" isBold="true" color="#FFFFFF"/>
+                </textElement>
+                <text><![CDATA[Ingresos]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="20">
+            <textField>
+                <reportElement x="5" y="0" width="30" height="20"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="35" y="0" width="200" height="20"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{titulo}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="235" y="0" width="170" height="20"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{autorNombre}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="405" y="0" width="140" height="20"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{categoriaNombre}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="545" y="0" width="120" height="20"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{cantidadVendida}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="665" y="0" width="130" height="20"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["S/ " + $F{ingresos}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+</jasperReport>

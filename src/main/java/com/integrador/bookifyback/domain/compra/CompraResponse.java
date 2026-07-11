@@ -1,4 +1,4 @@
 package com.integrador.bookifyback.domain.compra;
 
-public record CompraResponse(String preferenceId) {
+public record CompraResponse(Long compraId) {
 }

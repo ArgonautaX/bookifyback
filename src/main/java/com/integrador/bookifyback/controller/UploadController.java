@@ -1,6 +1,7 @@
 package com.integrador.bookifyback.controller;
 
 import com.integrador.bookifyback.domain.imagen.CloudinaryService;
+import com.integrador.bookifyback.domain.libro.LibroService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,11 @@ import java.util.Map;
 public class UploadController {
 
     private final CloudinaryService cloudinaryService;
+    private final LibroService libroService;
 
-    public UploadController(CloudinaryService cloudinaryService) {
+    public UploadController(CloudinaryService cloudinaryService, LibroService libroService) {
         this.cloudinaryService = cloudinaryService;
+        this.libroService = libroService;
     }
 
     @PostMapping("/imagen")
@@ -31,6 +34,18 @@ public class UploadController {
         }
 
         String url = cloudinaryService.subirImagen(archivo);
+        return ResponseEntity.ok(Map.of("url", url));
+    }
+
+    @PostMapping("/libro/{libroId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> subirArchivoLibro(@PathVariable Long libroId, @RequestParam("archivo") MultipartFile archivo) {
+        if (archivo.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "El archivo está vacío"));
+        }
+
+        String url = cloudinaryService.subirArchivo(archivo);
+        libroService.actualizarArchivoUrl(libroId, url);
         return ResponseEntity.ok(Map.of("url", url));
     }
 

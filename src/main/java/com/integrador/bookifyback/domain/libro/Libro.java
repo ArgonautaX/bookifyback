@@ -35,6 +35,9 @@ public class Libro {
     @Column(name = "portada_url")
     private String portadaUrl;
 
+    @Column(name = "archivo_url")
+    private String archivoUrl;
+
     @Column(nullable = false)
     private Boolean estado;
 

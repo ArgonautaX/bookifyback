@@ -37,12 +37,6 @@ public class Compra {
     @Column(nullable = false, length = 30)
     private String estado; // PENDIENTE, COMPLETADA, FALLIDA, CANCELADA
 
-    @Column(name = "mp_preference_id", length = 255)
-    private String mpPreferenceId;
-
-    @Column(name = "mp_payment_id", length = 255)
-    private String mpPaymentId;
-
     @PrePersist
     void prePersist() {
         if (fechaCompra == null) {

@@ -21,22 +21,16 @@ public class CompraController {
     public ResponseEntity<CompraResponse> iniciarCompra(@RequestBody CompraRequest request,
             Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String correo = userDetails.getUsername(); // El correo del cliente autenticado
+        String correo = userDetails.getUsername();
 
-        String preferenceId = compraService.iniciarCompra(request.libroId(), correo);
+        Long compraId = compraService.iniciarCompra(request.libroId(), correo);
 
-        return ResponseEntity.ok(new CompraResponse(preferenceId));
-    }
-
-    @PostMapping("/webhook")
-    public ResponseEntity<String> recibirWebhook(@RequestBody java.util.Map<String, Object> payload) {
-        compraService.procesarWebhook(payload);
-        return ResponseEntity.ok("OK");
+        return ResponseEntity.ok(new CompraResponse(compraId));
     }
 
     @PostMapping("/simular-pago")
     public ResponseEntity<String> simularPago(@RequestBody SimularPagoRequest request) {
-        compraService.simularPagoDirecto(request.preferenceId());
+        compraService.simularPagoDirecto(request.compraId());
         return ResponseEntity.ok("Pago procesado correctamente");
     }
 

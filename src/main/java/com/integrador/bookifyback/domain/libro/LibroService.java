@@ -172,6 +172,22 @@ public class LibroService {
                     .build();
         }
 
+    @Transactional
+    @org.springframework.cache.annotation.CacheEvict(value = "busquedaLibros", allEntries = true)
+    public LibroResponse actualizarArchivoUrl(Long libroId, String archivoUrl) {
+        Libro libro = libroRepository.findById(libroId)
+                .orElseThrow(() -> new RuntimeException("Libro no encontrado con id: " + libroId));
+
+        libro.setArchivoUrl(archivoUrl);
+        libroRepository.save(libro);
+
+        return LibroResponse.builder()
+                .exito(true)
+                .mensaje("Archivo del libro actualizado correctamente")
+                .libroId(libroId)
+                .build();
+    }
+
         @Transactional
         @org.springframework.cache.annotation.CacheEvict(value = "busquedaLibros", allEntries = true)
         public LibroResponse cambiarEstado(Long id, boolean activo) {

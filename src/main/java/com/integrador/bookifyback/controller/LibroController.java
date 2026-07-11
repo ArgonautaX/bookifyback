@@ -6,6 +6,7 @@ import com.integrador.bookifyback.domain.libro.dto.FiltroLibroDto;
 import com.integrador.bookifyback.domain.libro.dto.LibroBusquedaDto;
 import com.integrador.bookifyback.domain.libro.dto.LibroRequest;
 import com.integrador.bookifyback.domain.libro.dto.LibroResponse;
+import com.integrador.bookifyback.domain.compra.CompraRepository;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,9 +23,11 @@ import java.util.List;
 public class LibroController {
 
     private final LibroService libroService;
+    private final CompraRepository compraRepository;
 
-    public LibroController(LibroService libroService) {
+    public LibroController(LibroService libroService, CompraRepository compraRepository) {
         this.libroService = libroService;
+        this.compraRepository = compraRepository;
     }
 
     @GetMapping("/buscar")
@@ -69,6 +72,32 @@ public class LibroController {
     @GetMapping("/{id}")
     public ResponseEntity<Libro> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(libroService.obtenerPorId(id));
+    }
+
+    @GetMapping("/{id}/descargar")
+    public ResponseEntity<?> descargar(@PathVariable Long id,
+            org.springframework.security.core.Authentication authentication) {
+        Libro libro = libroService.obtenerPorId(id);
+
+        if (libro.getArchivoUrl() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            String correo = ((org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal()).getUsername();
+            boolean tieneAcceso = compraRepository.existsByUsuarioCorreoAndLibroIdAndEstado(correo, id, "COMPLETADA");
+            if (!tieneAcceso) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                        .body(java.util.Map.of("acceso", false, "mensaje", "No tienes acceso a este libro"));
+            }
+        }
+
+        return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                .location(java.net.URI.create(libro.getArchivoUrl()))
+                .build();
     }
 
     @GetMapping("/{id}/similares")

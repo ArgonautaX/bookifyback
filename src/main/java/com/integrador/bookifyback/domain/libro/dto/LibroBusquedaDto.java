@@ -10,6 +10,7 @@ public record LibroBusquedaDto(
         BigDecimal precio,
         String formato,
         String portadaUrl,
+        String archivoUrl,
         String autorNombre,
         String categoriaNombre,
         Boolean estado
@@ -22,6 +23,7 @@ public record LibroBusquedaDto(
                 libro.getPrecio(),
                 libro.getFormato(),
                 libro.getPortadaUrl(),
+                libro.getArchivoUrl(),
                 libro.getAutor().getNombre(),
                 libro.getCategoria().getNombre(),
                 libro.getEstado()

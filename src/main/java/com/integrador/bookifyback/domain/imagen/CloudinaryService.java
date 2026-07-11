@@ -32,6 +32,21 @@ public class CloudinaryService {
         }
     }
 
+    public String subirArchivo(MultipartFile archivo) {
+        try {
+            Map<?, ?> resultado = cloudinary.uploader().upload(
+                    archivo.getBytes(),
+                    ObjectUtils.asMap(
+                            "folder", "bookify/libros",
+                            "resource_type", "raw"
+                    )
+            );
+            return (String) resultado.get("secure_url");
+        } catch (IOException e) {
+            throw new RuntimeException("Error al subir el archivo a Cloudinary", e);
+        }
+    }
+
     public void eliminarImagen(String url) {
         if (url == null || url.isBlank()) return;
         try {
@@ -43,7 +58,7 @@ public class CloudinaryService {
     }
 
     private String extraerPublicId(String url) {
-        int inicio = url.indexOf("/bookify/portadas/");
+        int inicio = url.indexOf("/bookify/");
         if (inicio == -1) return "";
         String segmento = url.substring(inicio + 1);
         int punto = segmento.lastIndexOf(".");
