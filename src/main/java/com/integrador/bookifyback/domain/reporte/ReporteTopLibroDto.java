@@ -2,10 +2,17 @@ package com.integrador.bookifyback.domain.reporte;
 
 import java.math.BigDecimal;
 
-public record ReporteTopLibroDto(
-    String titulo,
-    String autorNombre,
-    String categoriaNombre,
-    Long cantidadVendida,
-    BigDecimal ingresos
-) {}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class ReporteTopLibroDto {
+    private String titulo;
+    private String autorNombre;
+    private String categoriaNombre;
+    private Long cantidadVendida;
+    private BigDecimal ingresos;
+}

@@ -41,9 +41,7 @@
     <pageHeader>
         <band height="70">
             <rectangle>
-                <reportElement x="0" y="0" width="802" height="60" mode="Opaque">
-                    <backcolor color="#F0F0F0"/>
-                </rectangle>
+                <reportElement x="0" y="0" width="802" height="60" mode="Opaque" backcolor="#F0F0F0"/>
             </rectangle>
             <textField>
                 <reportElement x="20" y="5" width="250" height="20"/>
@@ -72,49 +70,47 @@
     <columnHeader>
         <band height="25">
             <rectangle>
-                <reportElement x="0" y="0" width="802" height="25" mode="Opaque">
-                    <backcolor color="#2C3E50"/>
-                </reportElement>
+                <reportElement x="0" y="0" width="802" height="25" mode="Opaque" backcolor="#2C3E50"/>
             </rectangle>
             <staticText>
-                <reportElement x="5" y="0" width="30" height="25"/>
+                <reportElement x="5" y="0" width="30" height="25" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font size="10" isBold="true" color="#FFFFFF"/>
+                    <font size="10" isBold="true" />
                 </textElement>
                 <text><![CDATA[#]]></text>
             </staticText>
             <staticText>
-                <reportElement x="35" y="0" width="200" height="25"/>
+                <reportElement x="35" y="0" width="200" height="25" forecolor="#FFFFFF"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="10" isBold="true" color="#FFFFFF"/>
+                    <font size="10" isBold="true" />
                 </textElement>
                 <text><![CDATA[Título]]></text>
             </staticText>
             <staticText>
-                <reportElement x="235" y="0" width="170" height="25"/>
+                <reportElement x="235" y="0" width="170" height="25" forecolor="#FFFFFF"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="10" isBold="true" color="#FFFFFF"/>
+                    <font size="10" isBold="true" />
                 </textElement>
                 <text><![CDATA[Autor]]></text>
             </staticText>
             <staticText>
-                <reportElement x="405" y="0" width="140" height="25"/>
+                <reportElement x="405" y="0" width="140" height="25" forecolor="#FFFFFF"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="10" isBold="true" color="#FFFFFF"/>
+                    <font size="10" isBold="true" />
                 </textElement>
                 <text><![CDATA[Categoría]]></text>
             </staticText>
             <staticText>
-                <reportElement x="545" y="0" width="120" height="25"/>
+                <reportElement x="545" y="0" width="120" height="25" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font size="10" isBold="true" color="#FFFFFF"/>
+                    <font size="10" isBold="true" />
                 </textElement>
                 <text><![CDATA[Cantidad]]></text>
             </staticText>
             <staticText>
-                <reportElement x="665" y="0" width="130" height="25"/>
+                <reportElement x="665" y="0" width="130" height="25" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font size="10" isBold="true" color="#FFFFFF"/>
+                    <font size="10" isBold="true" />
                 </textElement>
                 <text><![CDATA[Ingresos]]></text>
             </staticText>
